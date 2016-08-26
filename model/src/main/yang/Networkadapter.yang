@@ -1,0 +1,56 @@
+    module Networkadapter {
+
+    yang-version 1;
+
+    //NOTE: The namespace should really have the app name in it (module name). However
+    //due to maven archetype issues, we were not able to dynamically add it here.
+    //If copying this project you should modify the namespace.
+    namespace "com:att:networkadapter";
+
+    prefix Networkadapter;
+    import ietf-inet-types { prefix "ietf"; revision-date "2010-09-24"; }
+
+    organization "Brocade Communication System";
+
+    contact
+        "Sample Person <someone@com.att.networkadapter>";
+
+    description
+        "Defines a Networkadapter yang file ";
+
+    revision "2015-01-15" {
+        description
+        "A sample yang model describing a list of tasks. Each task maintains a operational run count, which is increased
+        when the runTask RPC is invoked.";
+    }
+
+    rpc send-command {
+
+        input {
+            leaf ip {
+                type ietf:ipv4-address;
+            }
+            leaf userName {
+                type string;
+            }
+            leaf password {
+                type string;
+            }
+            leaf interface-name {
+                type string;
+            }
+            leaf operation-type {
+                type string;
+            }
+	    leaf description {
+	        type string;
+	    }
+        }
+        output {
+            leaf status {
+                type string;
+            }
+        }
+
+    }
+}

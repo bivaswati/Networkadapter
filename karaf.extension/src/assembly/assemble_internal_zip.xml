@@ -1,0 +1,57 @@
+<!--
+ (C)2015 Brocade Communications Systems, Inc.
+ 130 Holger Way, San Jose, CA 95134.
+ All rights reserved.
+
+ @author Anton Ivanov <aivanov@brocade.com>
+ Brocade, the B-wing symbol, Brocade Assurance, ADX, AnyIO, DCX, Fabric OS,
+ FastIron, HyperEdge, ICX, MLX, MyBrocade, NetIron, OpenScript, VCS, VDX, and
+ Vyatta are registered trademarks, and The Effortless Network and the On-Demand
+ Data Center are trademarks of Brocade Communications Systems, Inc., in the
+ United States and in other countries. Other brands and product names mentioned
+ may be trademarks of others.
+
+ Use of the software files and documentation is subject to license terms.
+-->
+<!-- Defines how we build the .zip file which is our distribution. -->
+<assembly
+	xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0 http://maven.apache.org/xsd/assembly-1.1.0.xsd">
+	<formats>
+		<format>zip</format>
+	</formats>
+
+	<!--  we want "system" and related files right at the root level
+		  as this file is suppose to be unzip on top of a karaf
+		  distro. -->
+	<includeBaseDirectory>false</includeBaseDirectory>
+
+	<fileSets>
+		<fileSet>
+			<directory>target/assembly/</directory>
+			<outputDirectory>.</outputDirectory>
+			<excludes>
+			</excludes>
+		</fileSet>
+	</fileSets>
+
+
+    <files>
+        <file>
+            <source>target/versions/version.properties</source>
+            <outputDirectory>versions</outputDirectory>
+            <destName>${project.groupId}-${project.artifactId}-${project.version}.properties</destName>
+            <fileMode>0444</fileMode>
+        </file>
+		<file>
+			<source>target/etc/bvc-extensions/feature_config_template.cfg</source>
+			<destName>controller/etc/bvc-extensions/${application.name}.cfg</destName>
+		</file>
+        <file>
+            <source>target/etc/bvc-extensions/feature_custom.install</source>
+            <destName>controller/etc/bvc-extensions/${application.name}.install</destName>
+        </file>
+    </files>
+
+</assembly>

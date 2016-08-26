@@ -1,0 +1,32 @@
+<!--
+(C)2015 Brocade Communications Systems, Inc.
+130 Holger Way, San Jose, CA 95134.
+All rights reserved.
+
+@author Anton Ivanov <aivanov@brocade.com>
+Brocade, the B-wing symbol, Brocade Assurance, ADX, AnyIO, DCX, Fabric OS,
+FastIron, HyperEdge, ICX, MLX, MyBrocade, NetIron, OpenScript, VCS, VDX, and
+Vyatta are registered trademarks, and The Effortless Network and the On-Demand
+Data Center are trademarks of Brocade Communications Systems, Inc., in the
+United States and in other countries. Other brands and product names mentioned
+may be trademarks of others.
+
+Use of the software files and documentation is subject to license terms.
+-->
+<features xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="networkadapter-${project.version}"
+          xmlns="http://karaf.apache.org/xmlns/features/v1.2.0"
+          xsi:schemaLocation="http://karaf.apache.org/xmlns/features/v1.2.0 http://karaf.apache.org/xmlns/features/v1.2.0">
+    <repository>mvn:org.opendaylight.mdsal/features-mdsal/${odl.mdsal.version}/xml/features</repository>
+    <feature name='Networkadapter' description="networkadapter.Networkadapter" version='${project.version}'>
+        <!-- It is assumed that applications are installed on BVC, which installs bvc-core including MD-SAL etc.
+        Do not list those features out here as that will tie your implementation to a specific version
+        of MD-SAL / BVC and force updates to your application for every upgrade of BVC core platform.-->
+        <feature version="${odl.controller.mdsal.version}">odl-mdsal-broker</feature>
+        <bundle>wrap:mvn:com.jcraft/jsch/0.1.31</bundle>
+        <bundle>mvn:com.att.networkadapter/networkadapter.model/${project.version}</bundle>
+        <bundle>mvn:com.att.networkadapter/networkadapter.provider/${project.version}</bundle>
+        <configfile finalname="etc/opendaylight/karaf/999-networkadapter-provider.xml">
+            mvn:com.att.networkadapter/networkadapter.provider/${project.version}/xml/config
+        </configfile>
+    </feature>
+</features>

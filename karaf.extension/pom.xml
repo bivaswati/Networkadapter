@@ -1,0 +1,198 @@
+<!--
+(C)2015 Brocade Communications Systems, Inc.
+130 Holger Way, San Jose, CA 95134.
+All rights reserved.
+
+@author Anton Ivanov <aivanov@brocade.com>
+Brocade, the B-wing symbol, Brocade Assurance, ADX, AnyIO, DCX, Fabric OS,
+FastIron, HyperEdge, ICX, MLX, MyBrocade, NetIron, OpenScript, VCS, VDX, and
+Vyatta are registered trademarks, and The Effortless Network and the On-Demand
+Data Center are trademarks of Brocade Communications Systems, Inc., in the
+United States and in other countries. Other brands and product names mentioned
+may be trademarks of others.
+
+Use of the software files and documentation is subject to license terms.
+-->
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <artifactId>networkadapter</artifactId>
+        <groupId>com.att.networkadapter</groupId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+    <artifactId>networkadapter.karaf.extension</artifactId>
+    <packaging>pom</packaging>
+
+    <properties>
+        <application.name>Networkadapter</application.name>
+        <features.boot>Networkadapter</features.boot>
+        <features.repositories>mvn:com.att.networkadapter/networkadapter.features/${project.version}/xml/features
+        </features.repositories>
+        <include.transitive.dependencies>false</include.transitive.dependencies>
+    </properties>
+
+    <dependencies>
+
+        <dependency>
+            <groupId>com.att.networkadapter</groupId>
+            <artifactId>networkadapter.features</artifactId>
+            <classifier>features</classifier>
+            <type>xml</type>
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>com.att.networkadapter</groupId>
+            <artifactId>networkadapter.provider</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.att.networkadapter</groupId>
+            <artifactId>networkadapter.provider</artifactId>
+            <classifier>config</classifier>
+            <type>xml</type>
+        </dependency>
+
+        <dependency>
+            <groupId>com.brocade.tools</groupId>
+            <artifactId>bvc-license</artifactId>
+            <type>txt</type>
+        </dependency>
+
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>internalzip</id>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <phase>package</phase>
+                        <configuration>
+                            <attach>false</attach>
+                            <finalName>extensions/${application.name}-${project.version}</finalName>
+                            <descriptors>
+                                <descriptor>src/assembly/assemble_internal_zip.xml</descriptor>
+                            </descriptors>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>externalzip</id>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <phase>package</phase>
+                        <configuration>
+                            <attach>false</attach>
+                            <finalName>${application.name}-${project.version}</finalName>
+                            <descriptors>
+                                <descriptor>src/assembly/assemble_outer_zip.xml</descriptor>
+                            </descriptors>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy-dependencies</id>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <phase>prepare-package</phase>
+                        <configuration>
+                            <transitive>false</transitive>
+                            <outputDirectory>${project.build.directory}/assembly/controller/system</outputDirectory>
+                            <overWriteReleases>false</overWriteReleases>
+                            <overWriteSnapshots>true</overWriteSnapshots>
+                            <overWriteIfNewer>true</overWriteIfNewer>
+                            <useRepositoryLayout>true</useRepositoryLayout>
+                            <addParentPoms>false</addParentPoms>
+                            <copyPom>false</copyPom>
+                            <excludeGroupIds>org.opendaylight,com.brocade.odl</excludeGroupIds>
+                            <scope>provided</scope>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>license</id>
+                        <goals>
+                            <goal>copy</goal>
+                        </goals>
+                        <phase>generate-resources</phase>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>com.brocade.tools</groupId>
+                                    <artifactId>bvc-license</artifactId>
+                                    <type>txt</type>
+                                    <outputDirectory>target/assembly</outputDirectory>
+                                    <destFileName>${project.artifactId}-license.txt</destFileName>
+                                </artifactItem>
+                            </artifactItems>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>2.6</version>
+                <executions>
+                    <execution>
+                        <id>copy-version</id>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <!-- here the phase you need -->
+                        <phase>validate</phase>
+                        <configuration>
+                            <outputDirectory>${basedir}/target/versions</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>src/main/resources/versions</directory>
+                                    <includes>
+                                        <include>version.properties</include>
+                                    </includes>
+                                    <filtering>true</filtering>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>copy-resources</id>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <!-- here the phase you need -->
+                        <phase>validate</phase>
+                        <configuration>
+                            <outputDirectory>${basedir}/target/etc/bvc-extensions</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>src/main/resources/etc/bvc-extensions</directory>
+                                    <includes>
+                                        <include>feature_config_template.cfg</include>
+                                        <include>feature_custom.install</include>
+                                    </includes>
+                                    <filtering>true</filtering>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>

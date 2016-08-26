@@ -1,0 +1,129 @@
+<!--
+(C)2015 Brocade Communications Systems, Inc.
+130 Holger Way, San Jose, CA 95134.
+All rights reserved.
+
+@author Anton Ivanov <aivanov@brocade.com>
+Brocade, the B-wing symbol, Brocade Assurance, ADX, AnyIO, DCX, Fabric OS,
+FastIron, HyperEdge, ICX, MLX, MyBrocade, NetIron, OpenScript, VCS, VDX, and
+Vyatta are registered trademarks, and The Effortless Network and the On-Demand
+Data Center are trademarks of Brocade Communications Systems, Inc., in the
+United States and in other countries. Other brands and product names mentioned
+may be trademarks of others.
+
+Use of the software files and documentation is subject to license terms.
+-->
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <artifactId>networkadapter</artifactId>
+        <groupId>com.att.networkadapter</groupId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+    <artifactId>networkadapter.features</artifactId>
+    <packaging>jar</packaging>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.att.networkadapter</groupId>
+            <artifactId>networkadapter.model</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.att.networkadapter</groupId>
+            <artifactId>networkadapter.provider</artifactId>
+            <classifier>config</classifier>
+            <type>xml</type>
+        </dependency>
+        <dependency>
+            <groupId>com.att.networkadapter</groupId>
+            <artifactId>networkadapter.provider</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.opendaylight.mdsal</groupId>
+            <artifactId>features-mdsal</artifactId>
+            <classifier>features</classifier>
+            <type>xml</type>
+            <scope>runtime</scope>
+        </dependency>
+
+        <!-- dependency for opendaylight-karaf-empty for use by testing
+        <dependency>
+        <groupId>org.opendaylight.controller</groupId>
+        <artifactId>opendaylight-karaf-empty</artifactId>
+        <type>zip</type>
+        </dependency>
+        -->
+
+        <dependency>
+            <!-- Required for launching the feature tests-->
+            <groupId>org.opendaylight.odlparent</groupId>
+            <artifactId>features-test</artifactId>
+            <scope>test</scope>
+            <version>${odl.commons.opendaylight.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.opendaylight.yangtools</groupId>
+            <artifactId>features-yangtools</artifactId>
+            <classifier>features</classifier>
+            <type>xml</type>
+            <scope>runtime</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.jcraft</groupId>
+            <artifactId>jsch</artifactId>
+            <version>0.1.31</version>
+            <type>jar</type>
+            <scope>runtime</scope>
+        </dependency>
+
+    </dependencies>
+
+    <build>
+        <resources>
+            <resource>
+                <filtering>true</filtering>
+                <directory>src/main/resources</directory>
+            </resource>
+        </resources>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>filter</id>
+                        <goals>
+                            <goal>resources</goal>
+                        </goals>
+                        <phase>generate-resources</phase>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-artifacts</id>
+                        <goals>
+                            <goal>attach-artifact</goal>
+                        </goals>
+                        <phase>package</phase>
+                        <configuration>
+                            <artifacts>
+                                <artifact>
+                                    <file>${project.build.directory}/classes/${features.file}</file>
+                                    <type>xml</type>
+                                    <classifier>features</classifier>
+                                </artifact>
+                            </artifacts>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>

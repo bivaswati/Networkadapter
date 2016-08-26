@@ -1,0 +1,77 @@
+/**
+* (C)2015 Brocade Communications Systems, Inc.
+* 130 Holger Way, San Jose, CA 95134.
+* All rights reserved.
+*
+* @author Anton Ivanov <aivanov@brocade.com>
+* Brocade, the B-wing symbol, Brocade Assurance, ADX, AnyIO, DCX, Fabric OS,
+* FastIron, HyperEdge, ICX, MLX, MyBrocade, NetIron, OpenScript, VCS, VDX, and
+* Vyatta are registered trademarks, and The Effortless Network and the On-Demand
+* Data Center are trademarks of Brocade Communications Systems, Inc., in the
+* United States and in other countries. Other brands and product names mentioned
+* may be trademarks of others.
+*
+* Use of the software files and documentation is subject to license terms.
+*/
+module Networkadapter-provider-impl {
+
+    yang-version 1;
+    namespace "brocade:training:Networkadapter:provider:impl";
+    prefix "Networkadapter-provider-impl";
+
+    import config { prefix config; revision-date 2013-04-05; }
+    import opendaylight-md-sal-binding { prefix mdsal; revision-date 2013-10-28; }
+
+     description
+        "This module contains the base YANG definitions for
+        Networkadapter-provider impl implementation.";
+
+    revision "2014-05-23" {
+        description
+            "Initial revision.";
+    }
+
+    // This is the definition of the service implementation as a module identity.
+    identity Networkadapter-provider-impl {
+            base config:module-type;
+
+            // Specifies the prefix for generated java classes.
+            config:java-name-prefix NetworkadapterProvider;
+    }
+
+    // Augments the 'configuration' choice node under modules/module.
+    // We consume the three main services, RPCs, DataStore, and Notifications
+    augment "/config:modules/config:module/config:configuration" {
+        case Networkadapter-provider-impl {
+            when "/config:modules/config:module/config:type = 'Networkadapter-provider-impl'";
+
+            container rpc-registry {
+                uses config:service-ref {
+                    refine type {
+                        mandatory true;
+                        config:required-identity mdsal:binding-rpc-registry;
+                    }
+                }
+            }
+
+            container notification-service {
+                uses config:service-ref {
+                    refine type {
+                        mandatory true;
+                        config:required-identity mdsal:binding-notification-service;
+                    }
+                }
+            }
+
+            container data-broker {
+                uses config:service-ref {
+                    refine type {
+                        mandatory false;
+                        config:required-identity mdsal:binding-async-data-broker;
+                    }
+                }
+            }
+
+        }
+    }
+}
